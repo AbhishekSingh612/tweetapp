@@ -34,6 +34,7 @@ public class TweetService {
 
     private final ProducerService producerService;
 
+    //Constructor based dependency injection
     public TweetService(AppUserRepository appUserRepository, TweetRepository tweetRepository,
                         ReplyRepository replyRepository, ProducerService producerService) {
         this.appUserRepository = appUserRepository;

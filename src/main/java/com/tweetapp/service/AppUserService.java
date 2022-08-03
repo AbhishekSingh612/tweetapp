@@ -28,19 +28,14 @@ import static com.tweetapp.constants.AppConstants.*;
 @Service
 public class AppUserService {
 
-    @Autowired
     AppUserRepository appUserRepository;
 
-    @Autowired
     UserDetailsService userDetailService;
 
-    @Autowired
     PasswordEncoder encoder;
 
-    @Autowired
     JwtUtil jwtUtil;
 
-    @Autowired
     AuthenticationManager authenticationManager;
 
     public void register(RegisterUserRequest request) {
@@ -117,4 +112,47 @@ public class AppUserService {
         }
         return users;
     }
+
+    //Setter based dependency injection
+    public AppUserRepository getAppUserRepository() {
+        return appUserRepository;
+    }
+
+    public void setAppUserRepository(AppUserRepository appUserRepository) {
+        this.appUserRepository = appUserRepository;
+    }
+
+    public UserDetailsService getUserDetailService() {
+        return userDetailService;
+    }
+
+    public void setUserDetailService(UserDetailsService userDetailService) {
+        this.userDetailService = userDetailService;
+    }
+
+    public PasswordEncoder getEncoder() {
+        return encoder;
+    }
+
+    public void setEncoder(PasswordEncoder encoder) {
+        this.encoder = encoder;
+    }
+
+    public JwtUtil getJwtUtil() {
+        return jwtUtil;
+    }
+
+    public void setJwtUtil(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
+    public AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
+
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+
 }
