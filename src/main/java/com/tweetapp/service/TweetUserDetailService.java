@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-import static com.tweetapp.constants.AppConstants.*;
+import static com.tweetapp.constants.AppConstants.USER_NOT_FOUND;
 
 @Service
 public class TweetUserDetailService implements UserDetailsService {

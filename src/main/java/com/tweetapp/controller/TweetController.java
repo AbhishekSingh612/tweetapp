@@ -1,8 +1,8 @@
 package com.tweetapp.controller;
 
 import com.tweetapp.dto.ReplyRequest;
-import com.tweetapp.entity.Tweet;
 import com.tweetapp.dto.TweetRequest;
+import com.tweetapp.entity.Tweet;
 import com.tweetapp.service.TweetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

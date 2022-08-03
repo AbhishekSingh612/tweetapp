@@ -1,9 +1,9 @@
 package com.tweetapp.controller;
 
-import com.tweetapp.entity.AppUser;
 import com.tweetapp.dto.AppUsers;
 import com.tweetapp.dto.JwtTokenResponse;
 import com.tweetapp.dto.RegisterUserRequest;
+import com.tweetapp.entity.AppUser;
 import com.tweetapp.service.AppUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static com.tweetapp.constants.AppConstants.REGISTERED_SUCCESSFULLY;

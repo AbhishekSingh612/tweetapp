@@ -1,12 +1,12 @@
 package com.tweetapp.service;
 
-import com.tweetapp.exception.ConfirmPasswordMismatchException;
-import com.tweetapp.exception.InvalidUsernameOrPasswordException;
-import com.tweetapp.exception.UserAlreadyExistException;
+import com.tweetapp.dto.AppUsers;
 import com.tweetapp.dto.JwtTokenResponse;
 import com.tweetapp.dto.RegisterUserRequest;
 import com.tweetapp.entity.AppUser;
-import com.tweetapp.dto.AppUsers;
+import com.tweetapp.exception.ConfirmPasswordMismatchException;
+import com.tweetapp.exception.InvalidUsernameOrPasswordException;
+import com.tweetapp.exception.UserAlreadyExistException;
 import com.tweetapp.repository.AppUserRepository;
 import com.tweetapp.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.tweetapp.constants.AppConstants.*;
-import static com.tweetapp.constants.AppConstants.USER_NOT_FOUND;
 
 @Slf4j
 @Service

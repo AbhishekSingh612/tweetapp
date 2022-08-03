@@ -13,7 +13,6 @@ import com.tweetapp.repository.ReplyRepository;
 import com.tweetapp.repository.TweetRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -116,7 +115,7 @@ public class TweetService {
             log.error(String.format(TWEET_NOT_FOUND, id));
             throw new TweetNotFoundException(String.format(TWEET_NOT_FOUND, id));
         }
-        tweetOptional.ifPresent(tweet -> tweetRepository.delete(tweet));
+        tweetOptional.ifPresent(tweetRepository::delete);
         log.info(String.format(TWEET_DELETED, id));
         return String.format(TWEET_DELETED, id);
     }
