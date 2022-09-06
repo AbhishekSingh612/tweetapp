@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public final class ConsumerService {
     private final static String TOPIC = "tweets";
 
-    @KafkaListener(topics = TOPIC, groupId = "group_id")
+   /* @KafkaListener(topics = TOPIC, groupId = "group_id")*/
     public void consume(Tweet tweet) {
         log.info("Successfully consumed tweet [ {} ] on  kafka topic [ {} ]",tweet, TOPIC);
     }
