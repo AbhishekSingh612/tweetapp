@@ -11,13 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.security.Principal;
 
 import static com.tweetapp.constants.AppConstants.REGISTERED_SUCCESSFULLY;
 import static com.tweetapp.constants.AppConstants.ROOT_URL;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping(path = ROOT_URL)
 public class UserController {
 
@@ -51,8 +52,26 @@ public class UserController {
     }
 
     @GetMapping("/user/search/{username}")
-    public ResponseEntity<List<AppUser>> searchUsers(@PathVariable String username){
+    public ResponseEntity<AppUsers> searchUsers(@PathVariable String username){
         log.info("Search request for user with username like {}",username);
         return ResponseEntity.ok(appUserService.searchUser(username));
+    }
+
+    @GetMapping("/user/currentUserDetail")
+    public ResponseEntity<AppUser> getCurrentUserDetails(Principal principal){
+        log.info("Get Current user request");
+        return ResponseEntity.ok(appUserService.getcurrentUserDetails(principal));
+    }
+
+    @GetMapping("/user/find/{username}")
+    public ResponseEntity<AppUser> getUserDetails(@PathVariable String username){
+        log.info("Get user request");
+        return ResponseEntity.ok(appUserService.getUserDetails(username));
+    }
+
+    @GetMapping("/user/findEmail/{email}")
+    public ResponseEntity<AppUser> getUserDetailsWithEmail(@PathVariable String email){
+        log.info("Get user request");
+        return ResponseEntity.ok(appUserService.getUserDetailsWithEmail(email));
     }
 }

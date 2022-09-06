@@ -15,6 +15,7 @@ import java.security.Principal;
 import static com.tweetapp.constants.AppConstants.ROOT_URL;
 
 @Slf4j
+@CrossOrigin("*")
 @RestController
 @RequestMapping(path = ROOT_URL)
 public class TweetController {

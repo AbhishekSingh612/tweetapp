@@ -1,5 +1,6 @@
 package com.tweetapp.utils;
 
+import com.tweetapp.dto.JwtTokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,13 +16,18 @@ public class JwtUtil {
     public static final String secret = "myJwtSecret";
     private static final int expireAfterMs = 6 /*Hours*/ * 60 * 60 * 1000;
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
+    public JwtTokenResponse generateToken(UserDetails userDetails) {
+
+        Date expiryDate =  getExpirationTime(new Date().getTime());
+
+        String token =  Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(getExpirationTime(new Date().getTime()))
+                .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS256,secret)
                 .compact();
+
+        return JwtTokenResponse.builder().token(token).expiryDateMs(expiryDate.getTime()).build();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

@@ -32,8 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
+                .cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/*/tweets/login","/api/*/tweets/register","/api/*/tweets/*/forgot").permitAll()
+                .antMatchers("/api/*/tweets/login","/api/*/tweets/register","/api/*/tweets/*/forgot","/api/*/tweets/user/find/*","/api/*/tweets/user/findEmail/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

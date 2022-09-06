@@ -11,9 +11,14 @@ import java.util.Optional;
 @Repository
 public interface AppUserRepository extends MongoRepository<AppUser,String> {
 
+    @Query("{'$or':[ {'email': ?0 }, {'userId': ?1 } ] }")
     Optional<AppUser> findByEmailOrUserId(String email, String userId);
+
+    Optional<AppUser> findByEmail(String email);
 
     @Query("{'$or':[ {'email':{$regex : ?0, $options: 'i'}}, {'userId':{$regex : ?0, $options: 'i'}} ] }")
     List<AppUser> findByEmailOrUserIdRegex(String regex);
+
+
 
 }

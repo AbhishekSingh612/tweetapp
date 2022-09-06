@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +70,7 @@ public class AppUserService {
         return !request.getPassword().equalsIgnoreCase(request.getConfirmPassword());
     }
 
-    private boolean isUserPresent(String username, String email) {
+    private boolean isUserPresent(String email, String username) {
         return appUserRepository.findByEmailOrUserId(email, username).isPresent();
     }
 
@@ -82,8 +83,10 @@ public class AppUserService {
             throw new InvalidUsernameOrPasswordException("Username/Password is invalid");
         }
         log.debug(END_OF_METHOD_IN_AUTH_SERVICE, "login");
-        String token = jwtUtil.generateToken(userDetailService.loadUserByUsername(username));
-        return JwtTokenResponse.builder().token(token).build();
+        JwtTokenResponse jwtTokenResponse = jwtUtil.generateToken(userDetailService.loadUserByUsername(username));
+        Optional<AppUser> userOp = appUserRepository.findByEmailOrUserId(username, username);
+        userOp.ifPresent(jwtTokenResponse::setUser);
+        return jwtTokenResponse;
     }
 
     public String forgotPassword(String username, String password) throws UsernameNotFoundException {
@@ -105,12 +108,32 @@ public class AppUserService {
         return AppUsers.builder().users(users).build();
     }
 
-    public List<AppUser> searchUser(String username) {
+    public AppUsers searchUser(String username) {
         List<AppUser> users = appUserRepository.findByEmailOrUserIdRegex(username);
-        if (users.isEmpty()){
-            throw new UsernameNotFoundException(USER_NOT_FOUND);
+        return AppUsers.builder().users(users).build();
+    }
+
+    public AppUser getUserDetails(String username) {
+        Optional<AppUser> userOptional = appUserRepository.findById(username);
+        if (userOptional.isEmpty()) {
+            log.error(String.format(USER_NOT_FOUND, username));
+            throw new UsernameNotFoundException(String.format(USER_NOT_FOUND, username));
         }
-        return users;
+        return userOptional.get();
+    }
+
+    public AppUser getcurrentUserDetails(Principal principal) {
+        String username = principal.getName();
+        return getUserDetails(username);
+    }
+
+    public AppUser getUserDetailsWithEmail(String email) {
+        Optional<AppUser> userOptional = appUserRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            log.error(String.format(USER_NOT_FOUND, email));
+            throw new UsernameNotFoundException(String.format(USER_NOT_FOUND, email));
+        }
+        return userOptional.get();
     }
 
     //Setter based dependency injection
@@ -118,6 +141,7 @@ public class AppUserService {
         return appUserRepository;
     }
 
+    @Autowired
     public void setAppUserRepository(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }
@@ -126,6 +150,7 @@ public class AppUserService {
         return userDetailService;
     }
 
+    @Autowired
     public void setUserDetailService(UserDetailsService userDetailService) {
         this.userDetailService = userDetailService;
     }
@@ -134,6 +159,7 @@ public class AppUserService {
         return encoder;
     }
 
+    @Autowired
     public void setEncoder(PasswordEncoder encoder) {
         this.encoder = encoder;
     }
@@ -142,6 +168,7 @@ public class AppUserService {
         return jwtUtil;
     }
 
+    @Autowired
     public void setJwtUtil(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
@@ -150,6 +177,7 @@ public class AppUserService {
         return authenticationManager;
     }
 
+    @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
