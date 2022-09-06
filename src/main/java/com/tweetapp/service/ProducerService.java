@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 public final class ProducerService {
     private static final String TOPIC = "tweets";
 
-    @Autowired
-    private KafkaTemplate<String, Tweet> kafkaTemplate;
+    /*@Autowired
+    private KafkaTemplate<String, Tweet> kafkaTemplate;*/
 
     public void sendMessage(Tweet tweet) {
         log.info("=> Publishing Tweet [ {} ] to kafka topic {}", TOPIC, tweet);
-        this.kafkaTemplate.send(TOPIC, tweet);
+        /*this.kafkaTemplate.send(TOPIC, tweet);*/
     }
 }
