@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers("/api/*/tweets/login","/api/*/tweets/register","/api/*/tweets/*/forgot","/api/*/tweets/user/find/*","/api/*/tweets/user/findEmail/*").permitAll()
+                .antMatchers("/actuator/**","/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -53,7 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
-        ;
     }
 
     @Bean
