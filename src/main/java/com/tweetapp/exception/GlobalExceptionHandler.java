@@ -1,6 +1,9 @@
 package com.tweetapp.exception;
 
 import com.tweetapp.dto.ErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,11 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
+    @ApiResponse(
+            description = "Invalid inputs",
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         Map<String, String> errors = ex.getAllErrors().stream()
@@ -43,6 +51,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UserAlreadyExistException.class)
+    @ApiResponse(
+            description = "User already exists",
+            responseCode = "409",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleUserAlreadyExists(UserAlreadyExistException ex, WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
@@ -58,6 +71,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConfirmPasswordMismatchException.class)
+    @ApiResponse(
+            description = "Confirm password does not match",
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleConfirmPasswordMismatch(ConfirmPasswordMismatchException ex, WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
@@ -73,6 +91,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
+    @ApiResponse(
+            description = "User not found",
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleUserNotFound(UsernameNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -84,6 +107,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(TweetNotFoundException.class)
+    @ApiResponse(
+            description = "Tweet not found",
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleTweetNotFoundException(TweetNotFoundException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -96,6 +124,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(InvalidUsernameOrPasswordException.class)
+    @ApiResponse(
+            description = "Invalid username or password",
+            responseCode = "401",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleInvalidUsernameOrPassword(InvalidUsernameOrPasswordException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -107,6 +140,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(CannotDeleteTweetException.class)
+    @ApiResponse(
+            description = "Cannot delete tweet",
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleCannotDeleteTweetException(CannotDeleteTweetException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -118,6 +156,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @ApiResponse(
+            description = "Http message not readable",
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -129,6 +172,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @ApiResponse(
+            description = "Missing request parameter",
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -144,6 +192,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(CannotUpdateTweetException.class)
+    @ApiResponse(
+            description = "Cannot Update Tweet",
+            responseCode = "400",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleCannotUpdateTweetException(CannotUpdateTweetException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -155,6 +208,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
+    @ApiResponse(
+            description = "Internal Server error",
+            responseCode = "500",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+    )
     public ResponseEntity<Object> handleRunTimeException(RuntimeException ex, WebRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
