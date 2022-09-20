@@ -1,18 +1,18 @@
 package com.tweetapp.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.tweetapp.entity.AppUser;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class AppUserRepositoryImpl implements AppUserRepository {
@@ -24,12 +24,15 @@ public class AppUserRepositoryImpl implements AppUserRepository {
 
     @Override
     public Optional<AppUser> findById(String id) {
-        return Optional.of(dbMapper.load(AppUser.class, id));
+        return Optional.ofNullable(dbMapper.load(AppUser.class, id));
     }
 
     @Override
     public List<AppUser> findAll() {
-        return dbMapper.scan(AppUser.class, scanExpression);
+        PaginatedScanList<AppUser> appUsers = dbMapper.scan(AppUser.class, scanExpression);
+        if (appUsers == null)
+            return Collections.emptyList();
+        return  new ArrayList<>(appUsers);
     }
 
     @Override
@@ -40,43 +43,25 @@ public class AppUserRepositoryImpl implements AppUserRepository {
 
     @Override
     public Optional<AppUser> findByEmailOrUserId(String email, String userId) {
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(userId));
 
-        DynamoDBQueryExpression<AppUser> queryExpression = new DynamoDBQueryExpression<AppUser>()
-                .withKeyConditionExpression("userId  = :val1").withExpressionAttributeValues(eav);
-
-        List<AppUser> appUsers = dbMapper.query(AppUser.class, queryExpression);
-
-
-        eav = new HashMap<>();
-        eav.put(":val2", new AttributeValue().withS(email));
-        if (CollectionUtils.isNotEmpty(appUsers))
-            return Optional.of(appUsers.get(0));
-
-        queryExpression = new DynamoDBQueryExpression<AppUser>()
-                .withKeyConditionExpression("email = :val2").withExpressionAttributeValues(eav);
-
-        appUsers = dbMapper.query(AppUser.class, queryExpression);
-
-        return Optional.of(appUsers.get(0));
+        PaginatedScanList<AppUser> appUsers = dbMapper.scan(AppUser.class, scanExpression);
+        if (appUsers == null)
+            return Optional.empty();
+        List<AppUser> users = new ArrayList<>(appUsers);
+        return users.stream().filter(user -> StringUtils.equals(user.getUserId(), userId) || StringUtils.equals(user.getEmail(), email)).findFirst();
     }
 
     @Override
     public Optional<AppUser> findByEmail(String email) {
-        return Optional.of(dbMapper.load(AppUser.class, email));
+        return findAll().stream().filter(appUser -> StringUtils.equals(appUser.getEmail(), email)).findFirst();
     }
 
     @Override
     public List<AppUser> findByEmailOrUserIdLikeRegex(String regex) {
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(regex));
-        eav.put(":val2", new AttributeValue().withS(regex));
-
-        DynamoDBQueryExpression<AppUser> queryExpression = new DynamoDBQueryExpression<AppUser>()
-                .withFilterExpression("CONTAINS(userId,:v1) or CONTAINS(email,:v2)")
-                .withExpressionAttributeValues(eav);
-
-        return dbMapper.query(AppUser.class, queryExpression);
+        PaginatedScanList<AppUser> appUsers = dbMapper.scan(AppUser.class, scanExpression);
+        if (appUsers == null)
+            return Collections.emptyList();
+        List<AppUser> users = new ArrayList<>(appUsers);
+        return users.stream().filter(user -> StringUtils.contains(user.getUserId(), regex) || StringUtils.contains(user.getEmail(), regex)).collect(Collectors.toList());
     }
 }
