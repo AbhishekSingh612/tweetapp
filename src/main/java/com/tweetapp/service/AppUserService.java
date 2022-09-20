@@ -10,6 +10,7 @@ import com.tweetapp.exception.UserAlreadyExistException;
 import com.tweetapp.repository.AppUserRepository;
 import com.tweetapp.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -104,12 +105,12 @@ public class AppUserService {
     }
 
     public AppUsers getAllUsers() {
-        List<AppUser> users = appUserRepository.findAll();
+        List<AppUser> users =  IterableUtils.toList(appUserRepository.findAll());
         return AppUsers.builder().users(users).build();
     }
 
     public AppUsers searchUser(String username) {
-        List<AppUser> users = appUserRepository.findByEmailOrUserIdRegex(username);
+        List<AppUser> users = appUserRepository.findByEmailOrUserIdLikeRegex(username);
         return AppUsers.builder().users(users).build();
     }
 

@@ -12,7 +12,8 @@ import com.tweetapp.repository.AppUserRepository;
 import com.tweetapp.repository.ReplyRepository;
 import com.tweetapp.repository.TweetRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +69,7 @@ public class TweetService {
     }
 
     public List<Tweet> getAllTweet() {
-        return tweetRepository.findAll();
+        return IterableUtils.toList(tweetRepository.findAll());
     }
 
     public List<Tweet> getAllTweetByUser(String username) {
