@@ -2,6 +2,7 @@ package com.tweetapp.entity;
 
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.tweetapp.config.DateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class Tweet {
     private String tag;
 
     @DynamoDBAttribute
+    @DynamoDBTypeConverted(converter = DateConverter.class)
     private LocalDateTime createdAt;
 
     @DynamoDBAttribute
@@ -41,15 +43,4 @@ public class Tweet {
     private List<Reply> replies;
 
 }
-class DateConverter implements DynamoDBTypeConverter<String, LocalDateTime> {
 
-    @Override
-    public String convert(final LocalDateTime time) {
-        return time.toString();
-    }
-
-    @Override
-    public LocalDateTime unconvert(final String string) {
-        return LocalDateTime.parse(string);
-    }
-}

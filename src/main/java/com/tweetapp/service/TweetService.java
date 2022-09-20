@@ -16,6 +16,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -53,12 +54,15 @@ public class TweetService {
         }
 
         AppUser user = appUserRepository.findByEmailOrUserId(currentUser, currentUser).get();
+
+        sanitizeUserObject(user);
+
         Tweet tweet = Tweet.builder()
                 .author(user)
                 .content(tweetRequest.getContent())
                 .tag(tweetRequest.getTag())
                 .createdAt(LocalDateTime.now())
-                .likedBy(new HashSet<>())
+                .likedBy(null)
                 .replies(new ArrayList<>())
                 .build();
         tweet = tweetRepository.save(tweet);
@@ -66,6 +70,11 @@ public class TweetService {
         producerService.sendMessage(tweet);
 
         return tweet;
+    }
+
+    private void sanitizeUserObject(AppUser user) {
+        user.setPassword(null);
+        user.setRoles(null);
     }
 
     public List<Tweet> getAllTweet() {
@@ -133,6 +142,10 @@ public class TweetService {
 
         Set<String> likedBy = tweet.getLikedBy();
 
+        if(likedBy==null){
+            likedBy = new HashSet<>();
+        }
+
         if (likedBy.contains(username)) {
 
             // If already liked then dislike (remove the like)
@@ -145,6 +158,11 @@ public class TweetService {
             log.info("Likes on tweet after like : {}", likedBy.size());
 
         }
+
+        if(CollectionUtils.isEmpty(likedBy)){
+            likedBy = null;
+        }
+        tweet.setLikedBy(likedBy);
         return tweetRepository.save(tweet);
     }
 
@@ -164,7 +182,7 @@ public class TweetService {
 
         Tweet tweet = tweetOptional.get();
         AppUser user = userOptional.get();
-
+        sanitizeUserObject(user);
         List<Reply> replies = tweet.getReplies();
         log.info("Replies on tweet before : {}", replies.size());
 
