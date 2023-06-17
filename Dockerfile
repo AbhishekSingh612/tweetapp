@@ -1,4 +1,6 @@
 FROM amazoncorretto:11-alpine-jdk
 MAINTAINER AbhishekSingh612
-COPY app.jar app.jar
+WORKDIR /app
+COPY . /app
+RUN ./mvnw clean package
 ENTRYPOINT ["java","-jar","app.jar"]
